@@ -1,1 +1,2 @@
 10 лучших идей C++ проекта для начинающих - https://itgap.ru/post/luchshiye-idei-cpp-proekta
+БлэкДжэк на ООП - http://zabudsky.ru/Blackjack_15_357_st.pdf
