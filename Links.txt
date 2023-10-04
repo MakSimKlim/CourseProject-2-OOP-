@@ -1,5 +1,0 @@
-10 лучших идей C++ проекта для начинающих - https://itgap.ru/post/luchshiye-idei-cpp-proekta
-БлэкДжэк на ООП - http://zabudsky.ru/Blackjack_15_357_st.pdf
-канал с интересным кодом - https://youtube.com/channel/UCVjpNNkda08YQT3ZjDt_i5w
-семейное дерево - https://github.com/vogosvagen/Family-Tree-Creator/tree/master/FamilyTree
-проекты по ООП - https://kpolyakov.spb.ru/school/probook/oop.htm
