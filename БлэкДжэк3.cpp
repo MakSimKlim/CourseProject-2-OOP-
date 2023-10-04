@@ -10,10 +10,11 @@
 #include <iomanip>
 #define NOMINMAX
 #include <windows.h>
-
+#include <io.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 using namespace std;
-
 
 class Card {
 public:
@@ -103,6 +104,24 @@ private:
     Suit suit;
 };
 
+class DeckManager {
+public:
+    static vector<Card> initializeDeck() {
+        vector<Card> deck;
+        for (int suit = Card::Hearts; suit <= Card::Spades; ++suit) {
+            for (int rank = Card::Two; rank <= Card::Ace; ++rank) {
+                deck.push_back(Card(static_cast<Card::Rank>(rank), static_cast<Card::Suit>(suit)));
+            }
+        }
+        return deck;
+    }
+
+    static void shuffleDeck(vector<Card>& deck) {
+        srand(static_cast<unsigned int>(time(0)));
+        random_shuffle(deck.begin(), deck.end());
+    }
+};
+
 class Player {
 public:
     Player() {}
@@ -149,24 +168,6 @@ public:
 
 protected:
     vector<Card> hand;
-};
-
-class DeckManager {
-public:
-    static vector<Card> initializeDeck() {
-        vector<Card> deck;
-        for (int suit = Card::Hearts; suit <= Card::Spades; ++suit) {
-            for (int rank = Card::Two; rank <= Card::Ace; ++rank) {
-                deck.push_back(Card(static_cast<Card::Rank>(rank), static_cast<Card::Suit>(suit)));
-            }
-        }
-        return deck;
-    }
-
-    static void shuffleDeck(vector<Card>& deck) {
-        srand(static_cast<unsigned int>(time(0)));
-        random_shuffle(deck.begin(), deck.end());
-    }
 };
 
 class HumanPlayer : public Player
@@ -230,7 +231,93 @@ public:
     {
         cerr << "Исключение: " << ex.what() << endl;
     }
-};
+
+    void displaySplashScreen()
+    {
+        cout << R"(
+  *****************************************************************************************
+  *                                                                                       *
+  *           $$$$$  $$      $$$$   $$$$  $$  $$    $$$$$$  $$$$   $$$$  $$  $$           *
+  *           $$  $$ $$     $$  $$ $$  $$ $$ $$         $$ $$  $$ $$  $$ $$ $$            *
+  *           $$$$$  $$     $$$$$$ $$     $$$$          $$ $$$$$$ $$     $$$$             *
+  *           $$  $$ $$     $$  $$ $$  $$ $$ $$     $$  $$ $$  $$ $$  $$ $$ $$            *
+  *           $$$$$  $$$$$$ $$  $$  $$$$  $$  $$     $$$$  $$  $$  $$$$  $$  $$           *
+  *                                                                                       *
+  *****************************************************************************************
+
+)";
+
+    }
+
+    void displayWelcomeScreen()
+    {
+        cout << R"(
+  *****************************************************************************************
+  *                                                                                       *
+  *                 $$   $$ $$$$$   $$       $$$$    $$$$   $$   $$ $$$$$                 *
+  *                 $$   $$ $$      $$      $$  $$  $$  $$  $$$ $$$ $$                    *
+  *                 $$ $ $$ $$$$    $$      $$      $$  $$  $$ $ $$ $$$$                  *
+  *                 $$$$$$$ $$      $$      $$  $$  $$  $$  $$   $$ $$                    *
+  *                  $$ $$  $$$$$   $$$$$$   $$$$    $$$$   $$   $$ $$$$$                 *
+  *                                                                                       *
+  *****************************************************************************************
+  =========================================================================================
+  =======                       Игра BlackjackGame началась!                        =======
+  =========================================================================================
+
+)";
+
+    }
+    void displayWonScreen()//победа
+    {
+        cout << R"(
+  *****************************************************************************************
+  *                                                                                       *
+  *                  $$  $$   $$$$   $$  $$       $$   $$  $$$$   $$  $$                  *
+  *                   $$$$   $$  $$  $$  $$       $$   $$ $$  $$  $$$ $$                  *
+  *                    $$    $$  $$  $$  $$       $$ $ $$ $$  $$  $$ $$$                  *
+  *                    $$    $$  $$  $$  $$       $$$$$$$ $$  $$  $$  $$                  *
+  *                    $$     $$$$    $$$$         $$ $$   $$$$   $$  $$                  *
+  *                                                                                       *
+  *****************************************************************************************
+
+
+)";
+
+    }
+    void displayLostScreen()//проигрыш
+    {
+        cout << R"(
+  *****************************************************************************************
+  *                                                                                       *
+  *              $$  $$   $$$$   $$  $$       $$       $$$$    $$$$   $$$$$$              *
+  *               $$$$   $$  $$  $$  $$       $$      $$  $$  $$        $$                *
+  *                $$    $$  $$  $$  $$       $$      $$  $$   $$$$     $$                *
+  *                $$    $$  $$  $$  $$       $$      $$  $$      $$    $$                *
+  *                $$     $$$$    $$$$        $$$$$$   $$$$    $$$$     $$                *
+  *                                                                                       *
+  *****************************************************************************************
+
+)";
+    }
+
+    void displayTieScreen() // ничья
+    {
+        cout << R"(
+  *****************************************************************************************
+  *                                                                                       *
+  *                               $$$$$$  $$$$$$  $$$$$                                   *
+  *                                 $$      $$    $$                                      *
+  *                                 $$      $$    $$$$                                    *
+  *                                 $$      $$    $$                                      *
+  *                                 $$    $$$$$$  $$$$$                                   *
+  *                                                                                       *
+  *****************************************************************************************
+
+)";
+    }
+
+    };
 
 class GameResult
 {
@@ -244,37 +331,66 @@ public:
 
         if (isBlackjack(players[0]->getHand()))
         {
-            consoleOutput.displayMessage("\nУ Вас BlackJack! Вы выиграли! Поздравляем Вас :)\n");
+            consoleOutput.displaySplashScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======                  У Вас BlackJack! Поздравляем с Победой!                  =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            system("pause");
+            system("cls");
+            consoleOutput.displaySplashScreen();
+
         }
         else if (playerSum > dealerSum && playerSum <= 21)
         {
-            consoleOutput.displayMessage("\nУ Вас очков больше, чем у Дилера! Вы выиграли! Поздравляем Вас :)\n");
+            consoleOutput.displayWonScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======   У Вас очков больше, чем у Дилера! Вы выиграли! Поздравляем с Победой!   =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
             system("pause");
             system("cls");
+            consoleOutput.displaySplashScreen();
         }
         else if (playerSum < dealerSum && playerSum <= 21 && dealerSum > 21)
         {
-            consoleOutput.displayMessage("\nУ Дилера перебор! Вы выиграли! Поздравляем Вас :)\n");
+            consoleOutput.displayWonScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======             У Дилера перебор! Вы выиграли! Поздравляем с Победой!         =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
             system("pause");
             system("cls");
+            consoleOutput.displaySplashScreen();
         }
         else if (playerSum == dealerSum)
         {
-            consoleOutput.displayMessage("\nУ Вас одинаковое количество очков с Дилером! Ничья! Везение на равных\n");
+            consoleOutput.displayTieScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======   У Вас одинаковое количество очков с Дилером! Ничья! Везение на равных   =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
             system("pause");
             system("cls");
+            consoleOutput.displaySplashScreen();
+
         }
         else if (playerSum < dealerSum && dealerSum <= 21)
         {
-            consoleOutput.displayMessage("\nУ Дилера очков больше, чем у Вас! Вы проиграли! Не переживайте :(\n");
+            consoleOutput.displayLostScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======      У Дилера очков больше, чем у Вас! Вы проиграли! Не отчаивайтесь!     =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
             system("pause");
             system("cls");
+            consoleOutput.displaySplashScreen();
+
         }
         else
         {
-            consoleOutput.displayMessage("\nУ Вас перебор! Вы проиграли! Не переживайте :(\n");
+            consoleOutput.displayLostScreen();
+            consoleOutput.displayMessage("  =========================================================================================\n");
+            consoleOutput.displayMessage("  =======                У Вас перебор! Вы проиграли! Не отчаивайтесь!              =======\n");
+            consoleOutput.displayMessage("  =========================================================================================\n");
             system("pause");
             system("cls");
+            consoleOutput.displaySplashScreen();
         }
     }
 private:
@@ -283,7 +399,6 @@ private:
             ((hand[0].getValue() == 11 && hand[1].getValue() == 10) ||
                 (hand[1].getValue() == 11 && hand[0].getValue() == 10)));
     }
-
 };
 
 class BlackjackGame
@@ -339,6 +454,10 @@ public:
         }
         
         GameResult::determineWinner(players, consoleOutput);
+        system("pause");
+        system("cls");
+        ConsoleOutput splashScrenn;
+        splashScrenn.displaySplashScreen();
     }
 
 private:
@@ -397,10 +516,12 @@ public:
 
         do
         {
-            cout << "1. Начать новую игру в BlackjackGame!\n";
-            cout << "2. Показать правила\n";
-            cout << "3. Выйти\n";
-            cout << "> ";
+            cout << "\t\t\t* Г Л А В Н О Е  И Г Р О В О Е  М Е Н Ю *\n\n";
+            cout << "\t\t\t  1. Начать новую игру\n";
+            cout << "\t\t\t  2. Правила игры\n";
+            cout << "\t\t\t  3. About\n";
+            cout << "\t\t\t  4. Выход\n\n";
+            cout << "\t\t\t  Выберите номер пункта меню > ";
 
             cin >> choice;
 
@@ -409,61 +530,88 @@ public:
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
-            if (choice != 1 && choice != 2 && choice != 3) 
+            if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
             {
                 system("cls");
-                std::cout << "Некорректный ввод. Выберите 1, 2 или 3." << std::endl;
+                std::cout << "Некорректный ввод. Выберите 1, 2, 3 или 4." << std::endl;
             }
 
-        } while (choice != 1 && choice != 2 && choice != 3);
+        } while (choice != 1 && choice != 2 && choice != 3 && choice != 4);
 
         return choice;
     }
 };
 
-class BlackjackRules {
+class BlackjackRules 
+{
 public:
     static void displayRules() {
-    cout << R"(Правила игры в Блэкджек:
+    cout << R"(
 
-1. Цель игры - набрать карты так, чтобы сумма их номиналов была как можно ближе к 21, 
-   но не превышала этого значения.
-2. Номиналы карт:
-   - Карты от 2 до 10 имеют номинал, равный их числовому значению.
-   - Валет (J), Дама (Q), Король (K) имеют номинал 10.
-   - Туз (A) может иметь значение 1 или 11, в зависимости от ситуации.
-3. Игрок и дилер получают по две карты. 
-4. Игрок может взять дополнительные карты ('взять еще') или отказаться ('достаточно').
-5. Дилер берет дополнительные карты, пока сумма его карт не достигнет или превысит 17.
-6. Побеждает игрок, чья сумма ближе к 21 и не превышает 21. В случае равенства - ничья.
-7. Блэкджек - набор 21 очка с двумя картами (туз и карта номиналом 10).
+
+
+   *********       П Р А В И Л А  И Г Р Ы  В  B L A C K J A C K G A M E :       *********
+
+   1. Цель игры - набрать карты так, чтобы сумма их номиналов была как можно ближе к 21, 
+      но не превышала этого значения.
+   2. Номиналы карт:
+      - Карты от 2 до 10 имеют номинал, равный их числовому значению.
+      - Валет (J), Дама (Q), Король (K) имеют номинал 10.
+      - Туз (A) может иметь значение 1 или 11, в зависимости от ситуации.
+   3. Игрок и дилер получают по две карты. 
+   4. Игрок может взять дополнительные карты ('взять еще') или отказаться ('достаточно').
+   5. Дилер берет дополнительные карты, пока сумма его карт не достигнет или превысит 17.
+   6. Побеждает игрок, чья сумма ближе к 21 и не превышает 21. В случае равенства - ничья.
+   7. Блэкджек - набор 21 очка с двумя картами (туз и карта номиналом 10).
+
+
+
+
+
+
 
 )";
     }
 };
 
+class AboutProgram
+{
+public:
+    static void displayAbout() 
+    {
+        cout << "\n\n\n\n\n\n\n\n";
+        cout << "\t***************              A B O U T             *************** \n\n";
+        cout << "\tАвтор кода этой игры: студент группы ПВ212 академии ТОР Климов М.А. \n";
+        cout << "\tКод написан в рамках курсового проекта на тему ООП в языке С++\n";
+        cout << "\tДата создания 04.10.2023г.\n";
+        cout << "\tПреподаватель курса Казин Ф.М.\n\n\n\n\n\n\n\n\n\n\n";
+    }
+};
+
+class ScreenSettings
+{
+public:
+    void consoleSettings()
+    {
+        setlocale(LC_ALL, "Rus");
+
+        //SetConsoleCP(1251);
+        //SetConsoleOutputCP(1251);
+
+        system("mode con cols=93 lines=25");                            //задание размеров окна консоли
+        system("title Курсовой проект - Игра BlackjackGame! V0.1");      //задание описания окна консоли
+        system("color 20");                                              //задание Атрибутов цвета консоли ("1-задний фон А-передний фон")
+       
+    }
+};
 
 int main()
 {
-    setlocale(LC_ALL, "Rus");
-   
-    //SetConsoleCP(1251);
-    //SetConsoleOutputCP(1251);
+    ScreenSettings consoleSet;
+    consoleSet.consoleSettings();
 
-    system("mode con cols=100 lines=20");                            //задание размеров окна консоли
-    system("title Курсовой проект - Игра BlackjackGame! V0.1");      //задание описания окна консоли
-    system("color 20");                                              //задание Атрибутов цвета консоли ("1-задний фон А-передний фон")
-
-    cout << "'__________________________________________________________'" << endl;
-    cout << "'|       ____  _            _     _            _          |'" << endl;
-    cout << "'|      | __ )| | __ _  ___| | __(_) __ _  ___| | __      |'" << endl;
-    cout << "'|      | |  \| |/ _` |/ __| |/ /| |/ _` |/ __| |/ /      |'" << endl;
-    cout << "'|      | |_) | | (_| | (__|   < | | (_| | (__|   <       |'" << endl;
-    cout << "'|      |____/|_|\__,_|\___|_|\_\/ |\__,_|\___|_|\_\      |'" << endl;
-    cout << "'|                             |__/                       |'" << endl;
-    cout << "'----------------------------------------------------------'" << endl;
-
-
+    ConsoleOutput splashScreen;
+    splashScreen.displaySplashScreen();
 
     int answer;
     mainMenu menu;
@@ -475,18 +623,31 @@ int main()
         if (answer == 1)
         {
             system("cls");
-            cout << "\nДобро пожаловать в игру BlackjackGame!\n" << endl;
+            ConsoleOutput welcomeScreen;
+            welcomeScreen.displayWelcomeScreen();
             BlackjackGame game;
             game.playGame();
         }
-    
         else if (answer == 2) 
         {
             system("cls");
-             BlackjackRules::displayRules();
+            BlackjackRules::displayRules();
+            system("pause");
+            system("cls");
+            ConsoleOutput splashScrenn;
+            splashScrenn.displaySplashScreen();
+        }
+        else if (answer == 3)
+        {
+            system("cls");
+            AboutProgram::displayAbout();
+            system("pause");
+            system("cls");
+            ConsoleOutput splashScrenn;
+            splashScrenn.displaySplashScreen();
         }
 
-} while (answer != 3);
+    } while (answer != 4);
 
     return 0;
 }
