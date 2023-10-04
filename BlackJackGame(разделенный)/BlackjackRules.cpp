@@ -1,7 +1,10 @@
 #include "BlackjackRules.h"
 #include <iostream>
 
-void BlackjackRules::displayRules() {
+
+// Определение метода displayRules() класса BlackjackRules.
+void BlackjackRules::displayRules() 
+{
     std::cout << R"(
 
 

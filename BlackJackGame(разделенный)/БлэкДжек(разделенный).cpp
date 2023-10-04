@@ -9,16 +9,21 @@
 #include "AboutProgram.h"
 #include "BlackjackGame.h"
 
-int main() {
+int main() 
+{
+    // Инициализация и настройка параметров консоли
     ScreenSettings consoleSet;
     consoleSet.consoleSettings();
 
+    // Вывод экрана приветствия
     ConsoleOutput splashScreen;
     splashScreen.displaySplashScreen();
 
+    // вызов главного игрового меню
     int answer;
     MainMenu menu;
 
+    // Основной цикл программы
     do {
         answer = menu.displayMenu();
 

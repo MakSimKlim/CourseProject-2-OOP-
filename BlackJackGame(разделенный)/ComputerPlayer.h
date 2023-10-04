@@ -3,7 +3,10 @@
 
 #include "Player.h"
 
-class ComputerPlayer : public Player {
+//  ласс, представл€ющий компьютерного игрока в игре в блэкджек
+class ComputerPlayer : public Player 
+{
 public:
+    // –еализаци€ виртуальной функции из базового класса
     bool wantCard() const override;
 };

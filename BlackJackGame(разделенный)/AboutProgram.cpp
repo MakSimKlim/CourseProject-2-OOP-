@@ -1,6 +1,7 @@
 #include "AboutProgram.h"
 #include <iostream>
 
+// Определение метода displayAbout() класса AboutProgram.
 void AboutProgram::displayAbout() {
     std::cout << "\n\n\n\n\n\n\n\n";
     std::cout << "\t***************              A B O U T             *************** \n\n";

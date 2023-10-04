@@ -4,8 +4,10 @@
 
 using namespace std;
 
+// Конструктор класса Card, инициализирующий ранг и масть карты
 Card::Card(Rank rank, Suit suit) : rank(rank), suit(suit) {}
 
+// Метод, возвращающий символьное представление ранга карты
 string Card::getSymbol() const {
     switch (rank) {
     case Two: return "2";
@@ -25,6 +27,7 @@ string Card::getSymbol() const {
     }
 }
 
+// Метод, возвращающий символьное представление масти карты
 string Card::getSuitSymbol() const {
     switch (suit) {
     case Hearts: return "'Червы'";
@@ -35,6 +38,7 @@ string Card::getSuitSymbol() const {
     }
 }
 
+// Метод, возвращающий значение карты в очках при игре в блэкджек
 int Card::getValue() const {
     if (rank >= Ten && rank != Ace) {
         return 10;
@@ -45,6 +49,7 @@ int Card::getValue() const {
     return static_cast<int>(rank);
 }
 
+// Метод, выводящий карту в консоль (символьное представление ранга и масти)
 void Card::display() const {
     cout << getSymbol() << getSuitSymbol() << " ";
 }

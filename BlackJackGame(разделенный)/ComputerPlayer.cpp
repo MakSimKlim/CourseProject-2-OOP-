@@ -1,6 +1,9 @@
 // ComputerPlayer.cpp
 #include "ComputerPlayer.h"
 
-bool ComputerPlayer::wantCard() const {
+// метод, который возвращает true, 
+// если сумма очков в руке компьютерного игрока меньше 17.
+bool ComputerPlayer::wantCard() const 
+{
     return (calculateHandSum() < 17);
 }

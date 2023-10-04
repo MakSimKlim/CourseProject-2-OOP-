@@ -3,23 +3,43 @@
 #include "ConsoleOutput.h"
 #include <cstdlib>
 
+// Метод для отображения рук всех игроков
+/*
+ConsoleOutput::: Это указывает, что displayHands является методом класса ConsoleOutput.
+
+std::unique_ptr обеспечивает единоличное владение объектом. 
+Это означает, что уникальный указатель автоматически освобождает
+память, когда объект больше не нужен (например, когда вектор players уничтожается).
+а также Отсутствие необходимости вручную отслеживать и освобождать память делает код более 
+безопасным и менее подверженным ошибкам.
+*/
 void ConsoleOutput::displayHands(const std::vector<std::unique_ptr<Player>>& players) const {
     system("cls");
-    for (size_t i = 0; i < players.size(); ++i) {
+    // Перебор всех игроков и отображение их рук
+    for (size_t i = 0; i < players.size(); ++i) 
+    {
+        // Вывод руки игрока с указанием имени
         players[i]->displayHand((i == 0) ? "у Вас" : "у Дилера");
     }
 }
 
-void ConsoleOutput::displayMessage(const std::string& message) const {
+// Метод для отображения текстового сообщения
+void ConsoleOutput::displayMessage(const std::string& message) const 
+{
+    // Вывод текстового сообщения с новой строки
     std::cout << message << std::endl;
 }
-
-void ConsoleOutput::displayException(const std::exception& ex) const {
+// Метод для отображения исключения (ошибки)
+void ConsoleOutput::displayException(const std::exception& ex) const 
+{
+    // Вывод сообщения об исключении в поток ошибок
     std::cerr << "Исключение: " << ex.what() << std::endl;
 }
 
+// Метод для отображения заставки
 void ConsoleOutput::displaySplashScreen() 
 {
+    // Вывод текста заставки (здесь использованы строки R"(...)" для многострочного литерала)
     std::cout << R"(
   *****************************************************************************************
   *                                                                                       *
@@ -33,8 +53,9 @@ void ConsoleOutput::displaySplashScreen()
 
 )";
 }
-
-void ConsoleOutput::displayWelcomeScreen() {
+// Метод для отображения экрана приветствия
+void ConsoleOutput::displayWelcomeScreen() 
+{
     std::cout << R"(
   *****************************************************************************************
   *                                                                                       *
@@ -51,8 +72,9 @@ void ConsoleOutput::displayWelcomeScreen() {
 
 )";
 }
-
-void ConsoleOutput::displayWonScreen() {
+// Метод для отображения экрана победы
+void ConsoleOutput::displayWonScreen() 
+{
     std::cout << R"(
   *****************************************************************************************
   *                                                                                       *
@@ -67,8 +89,9 @@ void ConsoleOutput::displayWonScreen() {
 
 )";
 }
-
-void ConsoleOutput::displayLostScreen() {
+// Метод для отображения экрана поражения
+void ConsoleOutput::displayLostScreen() 
+{
     std::cout << R"(
   *****************************************************************************************
   *                                                                                       *
@@ -82,8 +105,9 @@ void ConsoleOutput::displayLostScreen() {
 
 )";
 }
-
-void ConsoleOutput::displayTieScreen() {
+// Метод для отображения экрана ничьи
+void ConsoleOutput::displayTieScreen() 
+{
     std::cout << R"(
   *****************************************************************************************
   *                                                                                       *

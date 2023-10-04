@@ -1,10 +1,16 @@
 #include "mainMenu.h"
 #include <iostream>
 
-int MainMenu::displayMenu() const {
+// Определение метода displayMenu() класса MainMenu, объявленного в заголовочном файле.
+int MainMenu::displayMenu() const 
+{
+    // Локальная переменная choice, в которой будет храниться выбор пользователя.
     int choice;
 
-    do {
+    // Цикл do-while, предназначенный для вывода меню и ввода выбора пользователя.
+    do 
+    {
+        // Вывод на экран главного игрового меню.
         std::cout << "\t\t\t* Г Л А В Н О Е  И Г Р О В О Е  М Е Н Ю *\n\n";
         std::cout << "\t\t\t  1. Начать новую игру\n";
         std::cout << "\t\t\t  2. Правила игры\n";
@@ -12,18 +18,26 @@ int MainMenu::displayMenu() const {
         std::cout << "\t\t\t  4. Выход\n\n";
         std::cout << "\t\t\t  Выберите номер пункта меню > ";
 
+        // Ввод выбора пользователя в переменную choice.
         std::cin >> choice;
 
-        if (std::cin.fail()) {
+        // Проверка на корректность ввода. Если ввод не является целым числом,
+        // производится сброс флагов ошибок и очистка буфера ввода.
+        if (std::cin.fail()) 
+        {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
-        if (choice != 1 && choice != 2 && choice != 3 && choice != 4) {
+        // Проверка, является ли выбор пользователя корректным (1, 2, 3 или 4).
+        if (choice != 1 && choice != 2 && choice != 3 && choice != 4) 
+        {
+            // Очистка консоли и вывод сообщения об ошибке при некорректном вводе.
             system("cls");
             std::cout << "Некорректный ввод. Выберите 1, 2, 3 или 4." << std::endl;
         }
 
     } while (choice != 1 && choice != 2 && choice != 3 && choice != 4);
 
+    // Возврат выбора пользователя.
     return choice;
 }
